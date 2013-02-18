@@ -1,4 +1,4 @@
-package com.example.samplebookmarks;
+package com.example.sampletodo;
 
 @SuppressWarnings("serial")
 public class AppException extends RuntimeException {

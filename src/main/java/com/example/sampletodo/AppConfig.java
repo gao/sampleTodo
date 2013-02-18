@@ -1,4 +1,4 @@
-package com.example.samplebookmarks;
+package com.example.sampletodo;
 
 import java.io.IOException;
 import java.util.Set;
@@ -6,10 +6,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.britesnow.snow.web.auth.AuthRequest;
 import com.britesnow.snow.web.binding.EntityClasses;
-import com.example.samplebookmarks.entity.BaseEntity;
-import com.example.samplebookmarks.web.AppAuthRequest;
+import com.example.sampletodo.entity.BaseEntity;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
@@ -27,7 +25,7 @@ public class AppConfig extends AbstractModule {
     
     @Override
     protected void configure() {
-        bind(AuthRequest.class).to(AppAuthRequest.class);
+        //bind(AuthRequest.class).to(AppAuthRequest.class);
     }
 
     

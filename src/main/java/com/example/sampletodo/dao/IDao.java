@@ -1,4 +1,5 @@
-package com.example.samplebookmarks.dao;
+package com.example.sampletodo.dao;
+
 import java.util.List;
 import java.util.Map;
 
@@ -15,8 +16,6 @@ public interface IDao<E> {
     public E save(E entity);
 
     public List<E> save(E... entities);
-    
-    public void delete(Long id);
 
     public void delete(E entity);
 

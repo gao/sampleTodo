@@ -1,9 +1,9 @@
-package com.example.samplebookmarks.dao;
+package com.example.sampletodo.dao;
 
 import com.britesnow.snow.web.db.hibernate.HibernateDaoHelper;
-import com.example.samplebookmarks.entity.BaseEntity;
 import com.google.inject.Inject;
 import com.googlecode.gentyref.GenericTypeReflector;
+import com.example.sampletodo.entity.BaseEntity;
 import org.apache.commons.lang.StringUtils;
 
 import java.lang.reflect.Field;
@@ -14,17 +14,16 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
-public abstract class BaseHibernateDao<E> implements IDao<E> {
+public class BaseHibernateDao<E> implements IDao<E> {
 
-    protected Class<E> entityClass;
+    protected Class<E> persistentClass;
 
-    @Inject
     protected HibernateDaoHelper daoHelper;
 
     public BaseHibernateDao() {
         Type persistentType = GenericTypeReflector.getTypeParameter(getClass(), BaseHibernateDao.class.getTypeParameters()[0]);
         if (persistentType instanceof Class) {
-            this.entityClass = (Class<E>) persistentType;
+            this.persistentClass = (Class<E>) persistentType;
         } else {
             throw new IllegalStateException("concrete class " + getClass().getName()
                     + " must have a generic binding for interface "
@@ -32,11 +31,16 @@ public abstract class BaseHibernateDao<E> implements IDao<E> {
         }
     }
 
+    @Inject
+    public void injectDaoHelper(HibernateDaoHelper daoHelper) {
+        this.daoHelper = daoHelper;
+    }
+
     // --------- IDao Interface --------- //
     @Override
     public E get(Long id) {
         // TODO Auto-generated method stub
-        return daoHelper.get(entityClass, id);
+        return daoHelper.get(persistentClass, id);
     }
 
     /**
@@ -66,15 +70,11 @@ public abstract class BaseHibernateDao<E> implements IDao<E> {
     }
 
     @Override
-    public void delete(Long id){
-        daoHelper.delete(entityClass, id);
-    }
-    
-    @Override
     public void delete(E entity) {
         if (entity instanceof BaseEntity) {
             daoHelper.delete(entity);
         }
+
     }
 
     @Override
@@ -98,7 +98,7 @@ public abstract class BaseHibernateDao<E> implements IDao<E> {
 
     @Override
     public List<E> list(int pageIdx, int pageSize, Map filterMap, String sortColumn, SortOrder sortOrder) {
-        String query = "from " + entityClass.getSimpleName() + " where 1=1";
+        String query = "from " + persistentClass.getSimpleName() + " where 1=1";
 
         List filterList = new ArrayList();
         query += getFilterQuery(filterList, filterMap);
@@ -123,7 +123,7 @@ public abstract class BaseHibernateDao<E> implements IDao<E> {
                 }
                 Field field = null;
                 try {
-                    field = entityClass.getDeclaredField(key);
+                    field = persistentClass.getDeclaredField(key);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -161,7 +161,7 @@ public abstract class BaseHibernateDao<E> implements IDao<E> {
 
     @Override
     public Long count(Map filterMap) {
-        String query = "select count(*) from " + entityClass.getSimpleName() + " where 1=1";
+        String query = "select count(*) from " + persistentClass.getSimpleName() + " where 1=1";
         List filterList = new ArrayList();
         query += getFilterQuery(filterList, filterMap);
         return (Long) daoHelper.findFirst(query, filterList.toArray());
@@ -170,7 +170,7 @@ public abstract class BaseHibernateDao<E> implements IDao<E> {
     @Override
     public Class<E> getPersistentClass() {
         // TODO Auto-generated method stub
-        return entityClass;
+        return persistentClass;
     }
     // --------- IDao Interface --------- //
 }
